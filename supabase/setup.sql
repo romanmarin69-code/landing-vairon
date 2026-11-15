@@ -1,5 +1,5 @@
--- Run this in the Supabase SQL Editor after creating the admin user in
--- Authentication > Users. Replace ADMIN_EMAIL_HERE before running.
+-- Run this in the Supabase SQL Editor after creating admin@vairon.com in
+-- Authentication > Users.
 
 create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
@@ -129,6 +129,6 @@ using (bucket_id = 'vehicle-photos' and public.is_admin());
 insert into public.profiles (id, role)
 select id, 'admin'
 from auth.users
-where lower(email) = lower('ADMIN_EMAIL_HERE')
+where lower(email) = lower('admin@vairon.com')
 on conflict (id) do update
 set role = excluded.role;
