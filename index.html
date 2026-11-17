@@ -2395,7 +2395,11 @@ input,select,textarea{
   }
 
   .lg\:grid-cols-\[1\.25fr_\.75fr\]{
-    grid-template-columns: 1.25fr .75fr;
+    grid-template-columns: minmax(0,1.25fr) minmax(0,.75fr);
+  }
+
+  .lg\:grid-cols-\[1\.25fr_\.75fr\]>*{
+    min-width: 0;
   }
 
   .lg\:text-7xl{
@@ -2403,6 +2407,8 @@ input,select,textarea{
     line-height: 1;
   }
 }
+.grid>*{min-width:0}
+body{overflow-x:clip}
 </style>
 </head>
 <body>
