@@ -63,6 +63,17 @@
   }
 
   async function uploadPhoto(photo, vehicleId) {
+    // Las fotos HEIC (formato del iPhone) no se ven en Chrome ni Android.
+    // Si el navegador puede leerlas (Safari), se convierten a JPG al guardar.
+    if (/\.(heic|heif)(\?|$)/i.test(photo) && window.VxCompress) {
+      try {
+        const original = await fetch(photo);
+        if (original.ok) photo = await window.VxCompress(await original.blob());
+      } catch (_) {
+        return photo;
+      }
+    }
+
     if (!photo.startsWith("data:image/")) return photo;
 
     const response = await fetch(photo);
