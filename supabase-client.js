@@ -164,6 +164,9 @@
       fecha: vehicle.fecha,
     };
 
+    // "destacado" sólo se envía si el vehículo ya lo trae (la columna existe tras correr supabase/destacado.sql)
+    if (typeof vehicle.destacado === "boolean") row.destacado = vehicle.destacado;
+
     const { data, error } = await getClient()
       .from("vehicles")
       .upsert(row)
@@ -171,6 +174,22 @@
       .single();
     throwIfError(error);
     return data;
+  }
+
+  // Publicación destacada (portada): una sola a la vez. id = null la quita.
+  async function setFeatured(id) {
+    await requireAdmin();
+    const supabase = getClient();
+    const missing = (error) => error && (error.code === "PGRST204" || error.code === "42703" || /destacado/.test(error.message || ""));
+
+    const off = await supabase.from("vehicles").update({ destacado: false }).eq("destacado", true);
+    if (missing(off.error)) throw new Error("Falta un paso en Supabase: ejecutá supabase/destacado.sql en el SQL Editor.");
+    throwIfError(off.error);
+
+    if (id) {
+      const on = await supabase.from("vehicles").update({ destacado: true }).eq("id", id);
+      throwIfError(on.error);
+    }
   }
 
   async function deleteVehicle(id) {
@@ -191,5 +210,6 @@
     signOut,
     saveVehicle,
     deleteVehicle,
+    setFeatured,
   };
 })();

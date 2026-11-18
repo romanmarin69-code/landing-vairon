@@ -30,6 +30,7 @@ create table if not exists public.vehicles (
   estado text not null default 'ACTIVO' check (estado in ('ACTIVO', 'INACTIVO')),
   publicado boolean not null default false,
   fecha date not null default current_date,
+  destacado boolean not null default false,
   created_at timestamptz not null default now()
 );
 
